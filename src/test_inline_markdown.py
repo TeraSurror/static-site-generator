@@ -1,7 +1,7 @@
 import unittest
 
-from inline_markdown import extract_markdown_images, extract_markdown_links, split_nodes_delimiter
-from textnode import TextNode, TextType
+from inline_markdown import extract_markdown_images, extract_markdown_links, split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
+from textnode import TextNode, TextType, text_node_to_html_node
 
 
 class TestInlineMarkdown(unittest.TestCase):
@@ -58,3 +58,59 @@ class TestInlineMarkdown(unittest.TestCase):
         got = extract_markdown_links(text)
 
         self.assertEqual(got, expected)
+
+    def test_split_nodes_image(self):
+        node = TextNode(
+            "This is text with a link ![to boot dev](https://www.boot.dev) and ![to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.NORMAL_TEXT,
+        )
+        expected = [
+            TextNode("This is text with a link ", TextType.NORMAL_TEXT),
+            TextNode("to boot dev", TextType.IMAGE_TEXT, "https://www.boot.dev"),
+            TextNode(" and ", TextType.NORMAL_TEXT),
+            TextNode(
+            "to youtube", TextType.IMAGE_TEXT, "https://www.youtube.com/@bootdotdev"
+            ),
+        ]
+        got = split_nodes_image([node])
+
+        self.assertEqual(got, expected)
+
+    def test_split_nodes_links(self):
+        node = TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.NORMAL_TEXT,
+        )
+        expected = [
+            TextNode("This is text with a link ", TextType.NORMAL_TEXT),
+            TextNode("to boot dev", TextType.LINK_TEXT, "https://www.boot.dev"),
+            TextNode(" and ", TextType.NORMAL_TEXT),
+            TextNode(
+            "to youtube", TextType.LINK_TEXT, "https://www.youtube.com/@bootdotdev"
+            ),
+        ]
+        got = split_nodes_link([node])
+
+        self.assertEqual(got, expected)
+
+    def test_text_to_textnodes(self):
+        text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        expected = [
+            TextNode("This is ", TextType.NORMAL_TEXT),
+            TextNode("text", TextType.BOLD_TEXT),
+            TextNode(" with an ", TextType.NORMAL_TEXT),
+            TextNode("italic", TextType.ITALIC_TEXT),
+            TextNode(" word and a ", TextType.NORMAL_TEXT),
+            TextNode("code block", TextType.CODE_TEXT),
+            TextNode(" and an ", TextType.NORMAL_TEXT),
+            TextNode("obi wan image", TextType.IMAGE_TEXT, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(" and a ", TextType.NORMAL_TEXT),
+            TextNode("link", TextType.LINK_TEXT, "https://boot.dev"),
+        ]
+        got = text_to_textnodes(text)
+
+        self.assertEqual(got, expected)
+            
+            
+
+
