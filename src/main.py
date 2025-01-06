@@ -1,4 +1,5 @@
 from htmlnode import HTMLNode
+from inline_markdown import extract_markdown_images
 from textnode import TextNode, TextType
 
 def main():
@@ -8,5 +9,11 @@ def main():
 
     print(str(tn))
     print(div_html_node)
+
+
+    text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+    got = extract_markdown_images(text)
+    for a, b in got:
+        print(a, b)
 
 main()
