@@ -44,7 +44,8 @@ def split_nodes_image(old_nodes):
         split_nodes = []
         for image_alt, image_src in images:
             text_sections = text.split(f'![{image_alt}]({image_src})', 1)
-            split_nodes.append(TextNode(text=text_sections[0], text_type=TextType.NORMAL_TEXT))
+            if text_sections[0]:
+                split_nodes.append(TextNode(text=text_sections[0], text_type=TextType.NORMAL_TEXT))
             split_nodes.append(TextNode(text=image_alt, text_type=TextType.IMAGE_TEXT, url=image_src))
             text = ''.join(text_sections[1:])
         
@@ -67,7 +68,8 @@ def split_nodes_link(old_nodes):
         split_nodes = []
         for alt, href in links:
             text_sections = text.split(f'[{alt}]({href})', 1)
-            split_nodes.append(TextNode(text=text_sections[0], text_type=TextType.NORMAL_TEXT))
+            if text_sections[0]:
+                split_nodes.append(TextNode(text=text_sections[0], text_type=TextType.NORMAL_TEXT))
             split_nodes.append(TextNode(text=alt, text_type=TextType.LINK_TEXT, url=href))
             text = ''.join(text_sections[1:])
         

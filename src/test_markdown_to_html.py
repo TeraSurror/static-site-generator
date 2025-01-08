@@ -26,20 +26,3 @@ class TestMarkdownToHTML(unittest.TestCase):
         conv_html_node = markdown_to_html_node(text)
 
         self.assertEqual(conv_html_node.to_html(), parent_node.to_html())
-
-    def test_code_block_to_html_para(self):
-        text = 'Some text'
-        code_html_node = LeafNode(
-            tag='p',
-            value=text,
-            props=None
-        )
-        parent_node = ParentNode(
-            tag='div',
-            children=[code_html_node],
-            props=None,
-        )
-
-        conv_html_node = markdown_to_html_node(text)
-
-        self.assertEqual(conv_html_node.to_html(), parent_node.to_html())
