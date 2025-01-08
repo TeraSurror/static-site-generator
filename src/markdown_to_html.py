@@ -1,5 +1,5 @@
 from block_markdown import block_to_block_type, markdown_to_blocks
-from htmlnode import ParentNode
+from htmlnode import LeafNode, ParentNode
 from inline_markdown import text_to_textnodes
 from textnode import text_node_to_html_node
 
@@ -26,7 +26,22 @@ def block_to_html_node(markdown_block):
     if block_type == "heading":
         heading_html_node = block_to_html_node_heading(markdown_block)
         html_nodes.append(heading_html_node)
-    
+    elif block_type == "code":
+        code_html_node = block_to_html_node_code(markdown_block)
+        html_nodes.append(code_html_node)
+    elif block_type == "paragraph":
+        para_html_node = block_to_html_node_para(markdown_block)
+        html_nodes.append(para_html_node)
+    elif block_type == "quote":
+        quote_html_node = block_to_html_node_quote(markdown_block)
+        html_nodes.append(quote_html_node)
+    elif block_type == "unordered_list":
+        ulist_html_node = block_to_html_node_unordered_list(markdown_block)
+        html_nodes.append(ulist_html_node)
+    elif block_type == "ordered_list":
+        olist_html_node = block_to_html_node_ordered_list(markdown_block)
+        html_nodes.append(olist_html_node)
+
     return html_nodes
 
 def block_to_html_node_heading(markdown_block):
@@ -58,4 +73,41 @@ def block_to_html_node_heading(markdown_block):
 
     return heading_html_node
 
+
+def block_to_html_node_code(markdown_block):
+    code_text = markdown_block[3:-3]
+    return LeafNode(tag='code', value=code_text, props=None)
+
+def block_to_html_node_para(markdown_block):
+    return LeafNode(tag='p', value=markdown_block, props=None)
+
+def block_to_html_node_quote(markdown_block):
+    return LeafNode(tag='blockquote', value=markdown_block, props=None)
+
+def block_to_html_node_unordered_list(markdown_block):
+    list_node = ParentNode(
+        tag='ul',
+        children=[],
+        props=None
+    )
+
+    for line in markdown_block.split('\n'):
+        list_item = LeafNode(tag='li', value=line[2:], props=None)
+        list_node.children.append(list_item)
+
+    return list_node
+
+def block_to_html_node_ordered_list(markdown_block):
+    list_node = ParentNode(
+        tag='ol',
+        children=[],
+        props=None
+    )
+
+    for line in markdown_block.split('\n'):
+        list_text = line.split(' ', 1)
+        list_item = LeafNode(tag='li', value=list_text[1], props=None)
+        list_node.children.append(list_item)
+
+    return list_node
 
